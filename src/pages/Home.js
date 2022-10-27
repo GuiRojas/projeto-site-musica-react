@@ -16,7 +16,7 @@ export function Home(){
         </div>
       </div>
 
-      <Parallax img_path="background1.jpg" />
+      <Parallax img_path={process.env.PUBLIC_URL + '/background1.jpg'} />
 
     </div>
 
@@ -57,7 +57,7 @@ export function Home(){
           <h5 className="center-align light">Feito por fanáticos por música, para fanáticos por música</h5>
         </div>
       </div>
-      <Parallax img_path="background2.jpg" />
+      <Parallax img_path={process.env.PUBLIC_URL + '/background2.jpg'} />
     </div>
 
     <div className="brown lighten-5">
@@ -78,7 +78,7 @@ export function Home(){
     </div>
 
     <div className="parallax-container valign-wrapper">
-      <Parallax img_path="background3.jpg" />
+      <Parallax img_path={process.env.PUBLIC_URL + '/background3.jpg'} />
     </div>
     </>
   )
