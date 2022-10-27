@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import Parallax from './Parallax'
 
 export function Home(){
@@ -11,7 +12,12 @@ export function Home(){
             <h5 className="header col s12 light amber-text text-darken-1">Um hub para compartilhar música</h5>
           </div>
           <div className="row center">
-            <a href="musicas" className="btn-large amber darken-1">Ver nossa Biblioteca</a>
+            <Link
+              to="musicas"
+              className="btn-large amber darken-1"
+            >
+              Ver nossa Biblioteca
+            </Link>
           </div>  
         </div>
       </div>
