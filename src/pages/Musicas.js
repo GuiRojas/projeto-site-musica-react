@@ -1,4 +1,5 @@
 import React, { useEffect } from "react"
+import { Link } from "react-router-dom"
 import M from "materialize-css";
 
 // eslint-disable-next-line no-empty-pattern
@@ -14,34 +15,44 @@ const FloatingButton = ({}) => {
 
 // eslint-disable-next-line no-empty-pattern
 const NewAlbumModal = ({}) => {
+	const modalSubmit = (event) => {
+		event.preventDefault()
+		const nome = event.target.nome.value
+		const banda = event.target.banda.value
+		const duration = event.target.duration.value
+		const img = event.target.img.value
+
+		// todo mandar criar
+	}
+
 	return(
 		<div id="new" className="modal">
 
 			<div className="modal-content row">
 				<h4>Criar novo album</h4>
 
-				<form className="col s12">
+				<form className="col s12" onSubmit={modalSubmit}>
 
 					<div className="row">
 						<div className="input-field col s12 l6">
-							<input id="nome" type="text"/>
+							<input id="nome" name="nome" type="text"/>
 							<label htmlFor="nome">Nome do Álbum</label>
 						</div>
 
 						<div className="input-field col s12 l6">
-							<input id="banda" type="text"/>
+							<input id="banda" name="banda" type="text"/>
 							<label htmlFor="banda">Banda/Artista</label>
 						</div>
 					</div>
 
 					<div className="row">
 						<div className="input-field col s12 l6">
-							<input id="duration" type="text"/>
+							<input id="duration" name="duration" type="text"/>
 							<label htmlFor="duration">Duração</label>
 						</div>
 
 						<div className="input-field col s12 l6">
-							<input id="img" type="text"/>
+							<input id="img" name="img" type="text"/>
 							<label htmlFor="img">Link para capa do Álbum</label>
 						</div>
 					</div>
@@ -56,10 +67,9 @@ const NewAlbumModal = ({}) => {
 			</div>
 		</div>
 	)
-	// todo criar de vdd
 }
 
-const MusicCard = ({name, band, duration, img_path}) => {
+const MusicCard = ({name, band, duration, img_path, id}) => {
 	return(
 		<div className="col s12 m6 l3">
 			<div className="card brown lighten-5">
@@ -72,7 +82,14 @@ const MusicCard = ({name, band, duration, img_path}) => {
 					<p><b>Duração: </b>{duration}</p>
 				</div>
 				<div className="card-action">
-					<a href="#!">Ver Álbum</a>
+					<Link
+						to={"/album/"+id}
+					>
+						<span className="logo-text amber-text text-darken-1">
+							Ver Álbum
+						</span>
+					</Link>
+
 				</div>
 			</div>
 		</div>
@@ -99,6 +116,7 @@ export function Musicas(){
 						band='Metallica'
 						duration='62:40'
 						img_path='https://m.media-amazon.com/images/I/61Na6eN05jS._AC_SL1500_.jpg'
+						id='123'
 					/>
 
 					<MusicCard
@@ -106,6 +124,7 @@ export function Musicas(){
 						band='DIO'
 						duration='41:29'
 						img_path='https://upload.wikimedia.org/wikipedia/pt/8/85/HolyDiver.jpg'
+						id='123'
 					/>
 
 					<MusicCard
@@ -113,6 +132,7 @@ export function Musicas(){
 						band='Iron Maiden'
 						duration='51:12'
 						img_path='https://upload.wikimedia.org/wikipedia/en/1/1c/Iron_Maiden_-_Powerslave.jpg'
+						id='123'
 					/>
 
 					<MusicCard
@@ -120,6 +140,7 @@ export function Musicas(){
 						band='Black Sabbath'
 						duration='41:51'
 						img_path='https://www.tenhomaisdiscosqueamigos.com/wp-content/uploads/2020/08/black-sabbath-paranoid-super-deluxe.jpeg'
+						id='123'
 					/>
 				</div>
 				<div className="row">
@@ -130,6 +151,7 @@ export function Musicas(){
 						band='Pink Floyd'
 						duration='42:50'
 						img_path='https://urbanarts.vteximg.com.br/arquivos/ids/4768804-1000-1000/the-dark-side-of-the-moon-minimalista.jpg?v=637200910802670000'
+						id='123'
 					/>
 
 					<MusicCard
@@ -137,6 +159,7 @@ export function Musicas(){
 						band='King Crimson'
 						duration='43:56'
 						img_path='https://m.media-amazon.com/images/I/61r34SB-E2L._AC_SX425_.jpg'
+						id='123'
 					/>
 
 					<MusicCard
@@ -144,6 +167,7 @@ export function Musicas(){
 						band='System of a Down'
 						duration='44:01'
 						img_path='https://upload.wikimedia.org/wikipedia/en/6/64/SystemofaDownToxicityalbumcover.jpg'
+						id='123'
 					/>
 
 					<MusicCard
@@ -151,6 +175,7 @@ export function Musicas(){
 						band='Rainbow'
 						duration='36:54'
 						img_path='https://i.discogs.com/IgiwvlIMXMEf68tkk8z4ybwIwsOotBAwpVXr555XkRY/rs:fit/g:sm/q:90/h:594/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4MTc3/NTEtMTU2MDQ5OTI0/OC02MzY3LmpwZWc.jpeg'
+						id='123'
 					/>
 				</div>
 			</div>

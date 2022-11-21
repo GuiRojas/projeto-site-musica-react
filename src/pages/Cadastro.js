@@ -22,37 +22,62 @@ export function Cadastro(){
     setVal(data);
   };
 
+  const handleSubmit = (event) => {  	
+		event.preventDefault()
+		const first_name = event.target.first_name.value
+		const last_name = event.target.last_name.value
+		const password = event.target.password.value
+		const repeat_password = event.target.repeat_password.value
+		const email = event.target.email.value
+		const dataNascimento = event.target.dataNascimento.value
+		const tel = event.target.tel.value
+		const country = event.target.country.value
+
+		console.log(first_name)
+		console.log(last_name)
+		console.log(password)
+		console.log(repeat_password)
+		console.log(email)
+		console.log(dataNascimento)
+		console.log(tel)
+		console.log(country)
+
+		// todo criar
+
+		// if criou redirecionar pra login
+  }
+
 	return(
 		<div className="container">
 			<h3 className="header col s12 light center">Cadastre-se!</h3>
 			<h5 className="col s12 light center">Se torne parte da nossa comunidade</h5>
 
-			<form className="col s12">
+			<form className="col s12" onSubmit={handleSubmit}>
 				<div className="row">
 					<div className="input-field col s6 l6">
-						<input id="first_name" type="text" className="validate"/>
+						<input id="first_name" type="text" name="first_name" className="validate"/>
 						<label htmlFor="first_name">Nome</label>
 					</div>
 					<div className="input-field col s6 l6">
-						<input id="last_name" type="text" className="validate"/>
+						<input id="last_name" type="text" name="last_name" className="validate"/>
 						<label htmlFor="last_name">Sobrenome</label>
 					</div>
 				</div>
 
 				<div className="row">
 					<div className="input-field col s6 l6">
-						<input id="password" type="password" className="validate"/>
+						<input id="password" type="password" name="password" className="validate"/>
 						<label htmlFor="password">Senha</label>
 					</div>
 					<div className="input-field col s6 l6">
-						<input id="repeat_password" type="password" className="validate"/>
+						<input id="repeat_password" type="password" name="repeat_password" className="validate"/>
 						<label htmlFor="repeat_password">Repetir senha</label>
 					</div>
 				</div>
 
 				<div className="row">
 					<div className="input-field col s6 l6">
-						<input id="email" type="email" className="validate"/>
+						<input id="email" type="email" name="email" className="validate"/>
 						<label htmlFor="email">Email</label>					
 					</div>
 					<div className="input-field col s6 l6">
@@ -63,12 +88,12 @@ export function Cadastro(){
 
 				<div className="row">
 					<div className="input-field col s6 l6">
-						<input id="cellphone" type="tel" className="validate" pattern="[0-9]{9}"/>
+						<input id="cellphone" type="tel" name="tel" className="validate" pattern="[0-9]{9}"/>
 						<label htmlFor="cellphone">Telefone</label>
 
 					</div>
 					<div className="input-field col s6 l6">
-						<select defaultValue={'DEFAULT'}>
+						<select defaultValue={'DEFAULT'} name="country">
 							<option value="DEFAULT" disabled>País atual</option>
 							<option value="BR">Brasil</option>
 							<option value="US">Estados Unidos</option>
@@ -81,7 +106,7 @@ export function Cadastro(){
 				<div className="row">
 					<h5 className="header col s12 light center">Gêneros favoritos</h5>
 					<div className="input-field col s4 l4">
-						<p><label><input type="checkbox" className="red" /><span>Rock</span></label></p>
+						<p><label><input type="checkbox"/><span>Rock</span></label></p>
 						<p><label><input type="checkbox"/><span>Pop</span></label></p>
 					</div>
 					<div className="input-field col s4 l4">
