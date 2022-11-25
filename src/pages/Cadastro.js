@@ -29,7 +29,6 @@ export function Cadastro(){
 		const password = event.target.password.value
 		const repeat_password = event.target.repeat_password.value
 		const email = event.target.email.value
-		const dataNascimento = event.target.dataNascimento.value
 		const tel = event.target.tel.value
 		const country = event.target.country.value
 
@@ -38,7 +37,6 @@ export function Cadastro(){
 		console.log(password)
 		console.log(repeat_password)
 		console.log(email)
-		console.log(dataNascimento)
 		console.log(tel)
 		console.log(country)
 

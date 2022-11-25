@@ -1,6 +1,7 @@
-import React, { useEffect } from "react"
-import { Link } from "react-router-dom"
-import M from "materialize-css";
+import React, { useEffect, useState } from "react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import M from "materialize-css"
+import { getAlbums, createAlbum } from '../Api.js'
 
 // eslint-disable-next-line no-empty-pattern
 const FloatingButton = ({}) => {
@@ -15,14 +16,30 @@ const FloatingButton = ({}) => {
 
 // eslint-disable-next-line no-empty-pattern
 const NewAlbumModal = ({}) => {
-	const modalSubmit = (event) => {
-		event.preventDefault()
-		const nome = event.target.nome.value
-		const banda = event.target.banda.value
-		const duration = event.target.duration.value
-		const img = event.target.img.value
+	const navigate = useNavigate()
 
-		// todo mandar criar
+	const Create = async ({name, band, duration, image_path}) => {
+		const resp = await createAlbum({name, band, duration, image_path})
+		if(resp.status === 200){
+			navigate('../album/'+resp.data.id)
+			window.location.reload(false)
+		}
+	}
+
+	const ModalSubmit = (event) => {
+		event.preventDefault()
+		const name = event.target.nome.value
+		const band = event.target.banda.value
+		const duration = event.target.duration.value
+		const image_path = event.target.img.value
+
+		if(!name || !duration || name === "" || duration === "" ||
+		   !band || !image_path || band === "" || image_path === ""){
+			M.toast({html: "Preecha todos os dados corretamente!"})
+			return
+		}
+
+		Create({name, band, duration, image_path})		
 	}
 
 	return(
@@ -31,7 +48,7 @@ const NewAlbumModal = ({}) => {
 			<div className="modal-content row">
 				<h4>Criar novo album</h4>
 
-				<form className="col s12" onSubmit={modalSubmit}>
+				<form className="col s12" onSubmit={ModalSubmit}>
 
 					<div className="row">
 						<div className="input-field col s12 l6">
@@ -57,7 +74,7 @@ const NewAlbumModal = ({}) => {
 						</div>
 					</div>
 
-					<button className="right btn" type="submit" name="action">
+					<button className="right btn amber" type="submit" name="action">
 						Criar!
 						<i className="material-icons right">send</i>
 					</button>
@@ -75,9 +92,9 @@ const MusicCard = ({name, band, duration, img_path, id}) => {
 			<div className="card brown lighten-5">
 				<div className="card-image">
 					<img src={img_path} alt={'Album ' + name}/>
-					<span className="card-title">{name}</span>
 				</div>
 				<div className="card-content">
+					<span className="card-title black-text bold">{name}</span>
 					<p><b>Banda: </b>{band}</p>
 					<p><b>Duração: </b>{duration}</p>
 				</div>
@@ -96,12 +113,187 @@ const MusicCard = ({name, band, duration, img_path, id}) => {
 	)
 }
 
+const SearchBar = ({query, size}) => {
+	useEffect(() => {
+    let selectElements = document.querySelectorAll("select")
+    M.FormSelect.init(selectElements, {})
+
+		return () => {}
+	},[])
+
+	return(
+		<div className="row">
+			<form>
+				<div className="input-field col s8 l8">
+					<input defaultValue={query} id="query" type="text" name="query"/>
+					<label className="active" htmlFor="query">Pesquisar...</label>
+				</div>
+				<div className="input-field col s2 l2">
+					<select defaultValue={size} name="size">
+						<option value="8">8</option>
+						<option value="16">16</option>
+						<option value="24">24</option>
+					</select>
+					<label>Álbums por página</label>
+				</div>
+				<input type="hidden" value={1} name="page"/>
+				<div className="col s2 l2 bottom valign-wrapper">
+					<button className="btn waves-effect waves-light brown" type="submit" name="action">
+						Filtrar
+					</button>
+				</div>
+			</form>
+		</div>
+	)
+}
+
+const PageArrows = ({query, size, page, results}) => {
+	if(!page){
+		page = 0
+	} else {
+		page = parseInt(page)
+	}
+
+	let leftArrow
+	let rightArrow
+
+	if(page <= 1){
+		page = 1
+		leftArrow = (
+			<button className="disabled btn waves-effect waves-light brown" type="submit" name="action">
+				<i className="large material-icons">chevron_left</i>
+			</button>
+		)
+	} else {
+		leftArrow = (
+			<form>
+				<input type="hidden" value={page-1} name="page"/>
+				<input type="hidden" value={query} name="query"/>
+				<input type="hidden" value={size} name="size"/>
+				<button className="btn waves-effect waves-light brown" type="submit" name="action">
+					<i className="large material-icons">chevron_left</i>
+				</button>
+			</form>
+		)
+	}
+
+	if(results === parseInt(size)){
+		rightArrow = (
+			<form>
+				<input type="hidden" value={page+1} name="page"/>
+				<input type="hidden" value={query} name="query"/>
+				<input type="hidden" value={size} name="size"/>
+				<button className="btn waves-effect waves-light brown" type="submit" name="action">
+					<i className="large material-icons">chevron_right</i>
+				</button>
+			</form>
+		)
+	} else {
+		rightArrow = (
+			<button className="disabled btn waves-effect waves-light brown" type="submit" name="action">
+				<i className="large material-icons">chevron_right</i>
+			</button>
+
+		)
+	}
+
+	return(
+		<div className="row">
+			<div className="left s6 l6">
+				{leftArrow}			
+			</div>
+			<div className="right s6 l6">
+				{rightArrow}
+			</div>
+		</div>
+	)
+}
+
 export function Musicas(){
+	const [albums, setAlbums] = useState([])
+
+	const [searchParams, ] = useSearchParams()
+	let query = searchParams.get('query')
+	let size = searchParams.get('size')
+	let page = searchParams.get('page')
+
+	if(!query){query = ''}
+	if(!size){size = '8'}
+	if(!page){page = '1'}
+
 	useEffect(() => {
 		let modal = document.querySelectorAll(".modal")
 		M.Modal.init(modal)
-	},[])
 
+		const fetchData = async () => {
+			const resp = await getAlbums({query, size, page});
+			setAlbums(resp)
+		}
+		fetchData()
+
+		return () => {}
+	},[query, size, page])
+
+	if (!albums)
+		return (
+			<>
+				<div className="center"> carregando.... </div>
+				<NewAlbumModal/>
+				<FloatingButton/>
+			</>
+		)
+
+	if (!albums[0])
+		return (
+			<>
+				<div className="container">   
+					<h3 className="header col s12 light center">Nossas Músicas</h3>
+					<h5 className="col s12 light center">Acesse nosso acervo de onde quiser</h5>
+
+					<SearchBar
+						query={query}
+						size={size}
+					/>
+
+					<br/><br/>
+					<h4 className="light center">Nenhuma música encontrada!</h4>
+					<br/>
+					<h6 className="light center">Tente ajustar os filtros de busca</h6>
+					<br/><br/><br/>
+				</div>
+
+				<NewAlbumModal/>
+				<FloatingButton/>
+			</>
+		)
+
+	let albumCards = []
+
+	albums.forEach((albumX, index) => {
+		albumCards.push(
+			<MusicCard
+				name={albumX.name}
+				band={albumX.band}
+				duration={albumX.duration}
+				img_path={albumX.image_path}
+				id={albumX.id}
+				key={albumX.id}
+			/>)		
+	})
+
+
+	let divRows = []
+
+	const chunkSize = 4;
+	for (var i = 0; i < albumCards.length; i += chunkSize) {
+	    const chunk = albumCards.slice(i, i + chunkSize);
+
+	    divRows.push(
+	    	<div className="row" key={"row " + i}>
+	    		{chunk}
+	    	</div>
+	    )
+	}
 
 	return (
 		<>
@@ -109,79 +301,24 @@ export function Musicas(){
 				<h3 className="header col s12 light center">Nossas Músicas</h3>
 				<h5 className="col s12 light center">Acesse nosso acervo de onde quiser</h5>
 
-				<div className="row">
+				<SearchBar
+					query={query}
+					size={size}
+				/>
 
-					<MusicCard
-						name='Black Album'
-						band='Metallica'
-						duration='62:40'
-						img_path='https://m.media-amazon.com/images/I/61Na6eN05jS._AC_SL1500_.jpg'
-						id='123'
-					/>
+				{divRows}
 
-					<MusicCard
-						name='Holy Diver'
-						band='DIO'
-						duration='41:29'
-						img_path='https://upload.wikimedia.org/wikipedia/pt/8/85/HolyDiver.jpg'
-						id='123'
-					/>
+				<PageArrows
+					page={page}
+					query={query}
+					size={size}
+					results={albums.length}
+				/>
 
-					<MusicCard
-						name='Powerslave'
-						band='Iron Maiden'
-						duration='51:12'
-						img_path='https://upload.wikimedia.org/wikipedia/en/1/1c/Iron_Maiden_-_Powerslave.jpg'
-						id='123'
-					/>
-
-					<MusicCard
-						name='Paranoid'
-						band='Black Sabbath'
-						duration='41:51'
-						img_path='https://www.tenhomaisdiscosqueamigos.com/wp-content/uploads/2020/08/black-sabbath-paranoid-super-deluxe.jpeg'
-						id='123'
-					/>
-				</div>
-				<div className="row">
-
-
-					<MusicCard
-						name='The Dark Side of the Moon'
-						band='Pink Floyd'
-						duration='42:50'
-						img_path='https://urbanarts.vteximg.com.br/arquivos/ids/4768804-1000-1000/the-dark-side-of-the-moon-minimalista.jpg?v=637200910802670000'
-						id='123'
-					/>
-
-					<MusicCard
-						name='In the Court of the Crimson King'
-						band='King Crimson'
-						duration='43:56'
-						img_path='https://m.media-amazon.com/images/I/61r34SB-E2L._AC_SX425_.jpg'
-						id='123'
-					/>
-
-					<MusicCard
-						name='Toxicity'
-						band='System of a Down'
-						duration='44:01'
-						img_path='https://upload.wikimedia.org/wikipedia/en/6/64/SystemofaDownToxicityalbumcover.jpg'
-						id='123'
-					/>
-
-					<MusicCard
-						name="Ritchie Blackmore's Rainbow"
-						band='Rainbow'
-						duration='36:54'
-						img_path='https://i.discogs.com/IgiwvlIMXMEf68tkk8z4ybwIwsOotBAwpVXr555XkRY/rs:fit/g:sm/q:90/h:594/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4MTc3/NTEtMTU2MDQ5OTI0/OC02MzY3LmpwZWc.jpeg'
-						id='123'
-					/>
-				</div>
 			</div>
 
-			<FloatingButton/>
 			<NewAlbumModal/>
+			<FloatingButton/>
 		</>
 	)
 }
