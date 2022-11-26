@@ -1,7 +1,7 @@
 import axios from "axios"
 import M from "materialize-css"
 
-const URL = "http://localhost:4000"
+const URL = "https://charming-gifted-pewee.gigalixirapp.com/"
 
 export async function getAlbums(params) {
 	let res = await axios(URL + "/api/albums", {params})
