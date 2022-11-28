@@ -1,21 +1,48 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import M from "materialize-css"
-import { getAlbumInfo, createSong } from '../Api.js'
+import { getAlbumInfo, createSong, deleteSong, deleteAlbum } from '../Api.js'
 
-const SongListing = ({name, duration}) => {
+const SongListing = ({id, name, duration, title}) => {
+	const deleteSongSubmit = (event) => {
+		event.preventDefault()
+		const paramId = event.target.id.value
+
+		const doDelete = async () => {
+			const resp = await deleteSong({id: paramId})
+			if(resp){
+				window.location.reload(false)
+			}
+		}
+		doDelete()
+	}
+
+	let deleteButton = (<></>)
+	if(title !== "true"){
+		deleteButton = (
+			<form onSubmit={deleteSongSubmit}>
+				<input type="hidden" value={id} name="id" id="id"/>
+				<button className="btn brown" type="submit" name="action">
+					<i className="material-icons right">close</i>
+				</button>
+			</form>
+		)
+	}
+
 	return(
 		<div className="row">
-			<div className="col s9 l6 offset-l2 left-align">
+			<div className="col s7 l6 offset-l2 left-align">
 				<b>{name}</b>
 			</div>
-			<div className="col s3 l2 right-align grey-text">
+			<div className="col s2 l2 right-align grey-text">
 				{duration}
+			</div>
+			<div className="col s2 l2">
+				{deleteButton}
 			</div>
 		</div>
 	)
 }
-
 
 // eslint-disable-next-line no-empty-pattern
 const FloatingButton = ({}) => {
@@ -118,8 +145,26 @@ export function Album(){
 			name={songX.name}
 			duration={songX.duration}
 			key={songX.name}
+			id={songX.id}
+			title="false"
 		/>)
 	})
+
+	const navigate = useNavigate()
+
+	const deleteAlbumSubmit = (event) => {
+		event.preventDefault()
+		const paramId = event.target.id.value
+
+		const doDelete = async () => {
+			const resp = await deleteAlbum({id: paramId})
+			if(resp){
+				navigate('../musicas')
+				window.location.reload(false)
+			}
+		}
+		doDelete()
+	}
 
 	return (
 		<div className="container center">
@@ -135,12 +180,22 @@ export function Album(){
 				name="Nome da música"
 				duration="Duração"
 				key="legenda"
+				id="0"
+				title="true"
 			/>
 
 			<hr className="center valign-wrapper"/>
 			
 			{songsHtml}
 
+			<form onSubmit={deleteAlbumSubmit} className="center">
+				<input type="hidden" value={albumId} name="id" id="id"/>
+				<button className="btn amber" type="submit" name="action">
+					Deletar Album
+					<i className="material-icons right">delete</i>
+				</button>
+			</form>
+			<br/>
 
 			<FloatingButton/>
 			<NewSongModal
