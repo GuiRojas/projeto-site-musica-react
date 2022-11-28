@@ -9,4 +9,4 @@ run `npm i`
 
 ## running
 run `npm start`
-
+access `localhost:3000/projeto-site-musica-react`
