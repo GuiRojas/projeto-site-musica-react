@@ -11,20 +11,16 @@ import { Footer } from "./pages/Footer"
 function App() {
   return (
     <>
-
-    <Navbar/>
-
-    <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path="/musicas" element={<Musicas/>}/>
-      <Route path="/album/:id" element={<Album/>}/>
-      <Route path="/login" element={<Login/>}/>
-      <Route path="/cadastro" element={<Cadastro/>}/>
-      <Route path="*" element={<MissingPage/>} />
-    </Routes>
-
-    <Footer/>
-    
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/musicas" element={<Musicas/>}/>
+        <Route path="/album/:id" element={<Album/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/cadastro" element={<Cadastro/>}/>
+        <Route path="*" element={<MissingPage/>} />
+      </Routes>
+      <Footer/>
     </>
   )
 }

@@ -3,8 +3,7 @@ import M from 'materialize-css'
 
 const Parallax = ({img_path}) => {
   useEffect(() => {
-    let elements = document.querySelectorAll(".parallax")
-    M.Parallax.init(elements)
+		M.AutoInit(document.body)
   },[])
 
 	return (

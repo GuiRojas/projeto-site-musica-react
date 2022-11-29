@@ -3,13 +3,11 @@ export function MissingPage(){
 		<div className="container">
 			<div className="center">
 				<h2> 404 </h2>
-
 				<div className="row">
 					<span>
 						The content you are looking for was not found.
 					</span>
 				</div>
-
 				<div className="row">
 			        <a href="/projeto-site-musica-react">
 			        	<span>
